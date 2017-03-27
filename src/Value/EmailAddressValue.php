@@ -16,14 +16,14 @@ namespace BrightNucleus\Values\Value;
 use BrightNucleus\Values\Exception\FailedToSanitize;
 
 /**
- * Class StringValue.
+ * Class EmailAddressValue.
  *
- * @since   0.1.0
+ * @since   0.1.1
  *
  * @package BrightNucleus\Values
  * @author  Alain Schlesser <alain.schlesser@gmail.com>
  */
-class StringValue extends AbstractValue
+class EmailAddressValue extends AbstractValue
 {
 
     /**
@@ -39,21 +39,19 @@ class StringValue extends AbstractValue
      */
     public function validate($value)
     {
-        return is_string($value)
-            ? (string)$value
-            : null;
+        return filter_var($value, FILTER_VALIDATE_EMAIL, FILTER_NULL_ON_FAILURE);
     }
 
     /**
      * Get a sanitized version of the value.
      *
-     * @since 0.1.0
+     * @since 0.1.1
      *
      * @return mixed Sanitized version of the value.
      */
     public function sanitize()
     {
-        $value = filter_var($this->value, FILTER_SANITIZE_STRING, FILTER_NULL_ON_FAILURE);
+        $value = filter_var($this->value, FILTER_SANITIZE_EMAIL, FILTER_NULL_ON_FAILURE);
 
         if (null === $value) {
             throw FailedToSanitize::fromValue($this->value, $this);

@@ -13,6 +13,8 @@
 
 namespace BrightNucleus\Values\Value;
 
+use BrightNucleus\Values\Exception\FailedToSanitize;
+
 /**
  * Class IntegerValue.
  *
@@ -25,14 +27,38 @@ class IntegerValue extends AbstractValue
 {
 
     /**
-     * Instantiate a IntegerValue object.
+     * Return the validated form of the value.
+     *
+     * Returns null if the value could not be validated.
+     *
+     * @since 0.1.1
+     *
+     * @param mixed $value Value to validate.
+     *
+     * @return mixed|null Validated value. Null if validation failed.
+     */
+    public function validate($value)
+    {
+        return is_int($value)
+            ? (int)$value
+            : null;
+    }
+
+    /**
+     * Get a sanitized version of the value.
      *
      * @since 0.1.0
      *
-     * @param int $value Integer value.
+     * @return mixed Sanitized version of the value.
      */
-    public function __construct(int $value)
+    public function sanitize()
     {
-        $this->value = $value;
+        $value = filter_var($this->value, FILTER_SANITIZE_NUMBER_INT, FILTER_NULL_ON_FAILURE);
+
+        if (null === $value) {
+            throw FailedToSanitize::fromValue($this->value, $this);
+        }
+
+        return $value;
     }
 }

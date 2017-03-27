@@ -11,7 +11,8 @@
     }
   ],
   "require": {
-    "brightnucleus/exceptions": ">=0.2"
+    "brightnucleus/exceptions": ">=0.2",
+    "doctrine/collections": "^1.4"
   },
   "autoload": {
     "psr-4": {

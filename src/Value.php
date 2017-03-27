@@ -26,6 +26,8 @@ namespace BrightNucleus\Values;
 interface Value extends Validatable, Sanitizable, Escapable
 {
 
+    const CAN_BE_EMPTY = 1;
+
     /**
      * Get the raw value.
      *
@@ -47,22 +49,40 @@ interface Value extends Validatable, Sanitizable, Escapable
     public function setValue($value);
 
     /**
-     * "Execute" the value which is a shortcut for retrieving its raw value.
+     * Get the optional flags.
      *
-     * If a context is passed, it is sanitized and/or escaped depending on this context.
+     * @since 0.1.2
+     *
+     * @return mixed Current optional flags.
+     */
+    public function getFlags();
+
+    /**
+     * Set the optional flags.
+     *
+     * @since 0.1.2
+     *
+     * @param int $flags New set of flags.
+     *
+     * @return Value Modified Value object. Can differ from the original one.
+     */
+    public function setFlags(int $flags);
+
+    /**
+     * "Execute" the value which is a shortcut for retrieving its escaped value.
      *
      * This is an alternative way for accessing values to allow for more elegant syntax.
      *
      * @since 0.1.0
      *
+     * @param string $target Optional. Escaping target to use. Defaults to HTML.
+     *
      * @return mixed
      */
-    public function __invoke();
+    public function __invoke(string $target = EscapeTarget::HTML);
 
     /**
      * Return a string representation of the value.
-     *
-     * If a context is passed, it is sanitized and/or escaped depending on this context.
      *
      * @since 0.1.0
      *
