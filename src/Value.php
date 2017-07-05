@@ -13,6 +13,8 @@
 
 namespace BrightNucleus\Values;
 
+use BrightNucleus\Validation\Validatable;
+
 /**
  * Interface Value.
  *
@@ -67,6 +69,17 @@ interface Value extends Validatable, Sanitizable, Escapable
      * @return Value Modified Value object. Can differ from the original one.
      */
     public function setFlags(int $flags);
+
+    /**
+     * Check whether a value is empty.
+     *
+     * @since 0.2.0
+     *
+     * @param mixed $value Optional. Value to check. Falls back to current value if not provided.
+     *
+     * @return bool Whether the value is empty.
+     */
+    public function isEmpty($value = null): bool;
 
     /**
      * "Execute" the value which is a shortcut for retrieving its escaped value.

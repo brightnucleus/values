@@ -16,6 +16,7 @@ namespace BrightNucleus\Values\Value;
 use BrightNucleus\Values\EscapeTarget;
 use BrightNucleus\Values\Exception\FailedToValidate;
 use BrightNucleus\Values\Value;
+use BrightNucleus\Validation\Exception\ValidationException;
 
 /**
  * Class StringValue.
@@ -87,7 +88,7 @@ abstract class AbstractValue implements Value
     public function setValue($value)
     {
         if ($this->isEmpty($value) && ! $this->flags & Value::CAN_BE_EMPTY) {
-            throw FailedToValidate::fromValue($value, $this);
+            throw FailedToValidate::fromValueForClass($value, $this);
         }
 
         if (! $this->isEmpty($value)) {
@@ -95,7 +96,7 @@ abstract class AbstractValue implements Value
         }
 
         if (null === $value) {
-            throw FailedToValidate::fromValue($value, $this);
+            throw FailedToValidate::fromValueForClass($value, $this);
         }
 
         $this->value = $value;
@@ -161,13 +162,12 @@ abstract class AbstractValue implements Value
     /**
      * Return the validated form of the value.
      *
-     * Returns null if the value could not be validated.
-     *
      * @since 0.1.1
      *
      * @param mixed $value Value to validate.
      *
-     * @return mixed|null Validated value. Null if validation failed.
+     * @return mixed Validated value.
+     * @throws ValidationException If the value could not be validated.
      */
     public function validate($value)
     {
@@ -217,9 +217,9 @@ abstract class AbstractValue implements Value
      *
      * @return bool Whether the value is valid.
      */
-    public function isValid($value): bool
+    public static function isValid($value): bool
     {
-        return null !== $this->validate($value);
+        return true;
     }
 
     /**
@@ -232,7 +232,7 @@ abstract class AbstractValue implements Value
     protected function initializeValue($value)
     {
         if ($this->isEmpty($value) && ! $this->flags & Value::CAN_BE_EMPTY) {
-            throw FailedToValidate::fromValue($value, $this);
+            throw FailedToValidate::fromValueForClass($value, $this);
         }
 
         if (! $this->isEmpty($value)) {
@@ -240,7 +240,7 @@ abstract class AbstractValue implements Value
         }
 
         if (null === $value) {
-            throw FailedToValidate::fromValue($value, $this);
+            throw FailedToValidate::fromValueForClass($value, $this);
         }
 
         $this->value = $value;
@@ -320,12 +320,12 @@ abstract class AbstractValue implements Value
      *
      * @since 0.1.1
      *
-     * @param mixed $value Value to check.
+     * @param mixed $value Optional. Value to check. Falls back to current value if not provided.
      *
      * @return bool Whether the value is empty.
      */
-    protected function isEmpty($value): bool
+    public function isEmpty($value = null): bool
     {
-        return empty($value);
+        return empty($value ?? $this->value);
     }
 }

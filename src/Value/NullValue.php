@@ -13,6 +13,7 @@
 
 namespace BrightNucleus\Values\Value;
 
+use BrightNucleus\Validation\Exception\ValidationException;
 use BrightNucleus\Values\EscapeTarget;
 use BrightNucleus\Values\Value;
 
@@ -56,13 +57,12 @@ class NullValue implements Value
     /**
      * Return the validated form of the value.
      *
-     * Returns null if the value could not be validated.
-     *
      * @since 0.1.1
      *
      * @param mixed $value Value to validate.
      *
-     * @return mixed|null Validated value. Null if validation failed.
+     * @return mixed Validated value.
+     * @throws ValidationException If the value could not be validated.
      */
     public function validate($value)
     {
@@ -79,7 +79,7 @@ class NullValue implements Value
      *
      * @return bool Whether the value is valid.
      */
-    public function isValid($value): bool
+    public static function isValid($value): bool
     {
         return true;
     }
@@ -167,4 +167,17 @@ class NullValue implements Value
         return '';
     }
 
+    /**
+     * Check whether a value is empty.
+     *
+     * @since 0.1.1
+     *
+     * @param mixed $value Optional. Value to check. Falls back to current value if not provided.
+     *
+     * @return bool Whether the value is empty.
+     */
+    public function isEmpty($value = null): bool
+    {
+        return null !== $value ? empty($value) : true;
+    }
 }

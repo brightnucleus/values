@@ -32,17 +32,17 @@ class FailedToSanitize extends RuntimeException implements ValueException
      *
      * @since 0.1.1
      *
-     * @param mixed $value       Value that failed sanitization.
-     * @param Value $valueObject Value object that the value was sanitized against.
+     * @param mixed $value  Value that failed sanitization.
+     * @param string $class FCQN of the class that the value was sanitized against.
      *
      * @return FailedToSanitize
      */
-    public static function fromValue($value, Value $valueObject)
+    public static function fromValueForClass($value, string $class)
     {
         $message = sprintf(
             'Failed to sanitize value of type %1$s from Value object of type %2$s. (%3$s)',
             is_object($value) ? get_class($value) : gettype($value),
-            get_class($valueObject),
+            $class,
             json_encode($value)
         );
 

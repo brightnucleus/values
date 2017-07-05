@@ -14,6 +14,8 @@
 namespace BrightNucleus\Values\Value;
 
 use BrightNucleus\Values\Exception\FailedToSanitize;
+use BrightNucleus\Validation\Exception\ValidationException;
+use BrightNucleus\Values\Exception\FailedToValidate;
 
 /**
  * Class EmailAddressValue.
@@ -25,21 +27,25 @@ use BrightNucleus\Values\Exception\FailedToSanitize;
  */
 class EmailAddressValue extends AbstractValue
 {
+    protected $validated;
 
     /**
      * Return the validated form of the value.
-     *
-     * Returns null if the value could not be validated.
      *
      * @since 0.1.1
      *
      * @param mixed $value Value to validate.
      *
-     * @return mixed|null Validated value. Null if validation failed.
+     * @return mixed Validated value.
+     * @throws ValidationException If the value could not be validated.
      */
     public function validate($value)
     {
-        return filter_var($value, FILTER_VALIDATE_EMAIL, FILTER_NULL_ON_FAILURE);
+        $value = filter_var($value, FILTER_VALIDATE_EMAIL);
+        if (false === $value) {
+            throw FailedToValidate::fromValueForClass($value, static::class);
+        }
+        return $value;
     }
 
     /**
@@ -54,9 +60,23 @@ class EmailAddressValue extends AbstractValue
         $value = filter_var($this->value, FILTER_SANITIZE_EMAIL, FILTER_NULL_ON_FAILURE);
 
         if (null === $value) {
-            throw FailedToSanitize::fromValue($this->value, $this);
+            throw FailedToSanitize::fromValueForClass($this->value, $this);
         }
 
         return $value;
+    }
+
+    /**
+     * Check whether a value is valid according to the attached validation rules.
+     *
+     * @since 0.2.0
+     *
+     * @param mixed $value Value to check for validity.
+     *
+     * @return bool Whether the value is valid.
+     */
+    public static function isValid($value): bool
+    {
+        return false !== filter_var($value, FILTER_VALIDATE_EMAIL);
     }
 }
